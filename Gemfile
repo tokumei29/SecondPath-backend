@@ -1,10 +1,11 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 8.1.2"
+gem "rails", "8.0.1"
 gem "pg"
 gem "puma", ">= 5.0"
 
 gem "rack-cors"
+gem "dotenv-rails"
 
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
