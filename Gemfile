@@ -13,6 +13,8 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+gem "rubocop", require: false
+gem "rubocop-rails", require: false
 gem "bootsnap", require: false
 gem "kamal", require: false
 gem "thruster", require: false
@@ -27,3 +29,4 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "faker"
 end
+gem "jwt", "~> 3.1"

@@ -1,16 +1,13 @@
-# Be sure to restart your server when you modify this file.
+# config/initializers/cors.rb
 
-# Avoid CORS issues when API is called from the frontend app.
-# Handle Cross-Origin Resource Sharing (CORS) in order to accept cross-origin Ajax requests.
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    # フロントエンドのURLを指定（開発環境なら localhost:3000 など）
+    origins "http://localhost:3001"
 
-# Read more: https://github.com/cyu/rack-cors
-
-# Rails.application.config.middleware.insert_before 0, Rack::Cors do
-#   allow do
-#     origins "example.com"
-#
-#     resource "*",
-#       headers: :any,
-#       methods: [:get, :post, :put, :patch, :delete, :options, :head]
-#   end
-# end
+    resource "*",
+      headers: :any,
+      methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
+      credentials: true # クッキーや認証情報を送る場合は必須
+  end
+end
