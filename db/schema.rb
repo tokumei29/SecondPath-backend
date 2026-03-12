@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_12_051958) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_12_063837) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -107,6 +107,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_051958) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "support_messages", force: :cascade do |t|
+    t.bigint "text_support_id", null: false
+    t.text "body"
+    t.integer "sender_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["text_support_id"], name: "index_support_messages_on_text_support_id"
+  end
+
   create_table "text_supports", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -117,4 +126,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_051958) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "users", force: :cascade do |t|
+    t.string "supabase_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["supabase_id"], name: "index_users_on_supabase_id"
+  end
+
+  add_foreign_key "support_messages", "text_supports"
 end

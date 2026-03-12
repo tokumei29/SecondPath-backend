@@ -1,14 +1,16 @@
-class Api::V1::CognitiveDistortionAssessmentsController < ActionController::API
+class Api::V1::CognitiveDistortionAssessmentsController < ApplicationController
+  # Supabase認証を必須にする
+  before_action :authenticate_user!
+
   def index
-    # 直接 CognitiveDistortionAssessment から user_id で検索する
-    @assessments = CognitiveDistortionAssessment.where(user_id: params[:user_id]).order(created_at: :asc)
+    # params[:user_id] ではなく、トークンから判別した本人のデータのみ取得
+    @assessments = current_user.cognitive_distortion_assessments.order(created_at: :asc)
     render json: @assessments.map { |a| format_assessment(a) }
   end
 
   def create
-    # new して user_id を直接代入する
-    @assessment = CognitiveDistortionAssessment.new(distortion_params)
-    @assessment.user_id = params[:user_id] # URLの :user_id から取得
+    # current_user に紐づけて安全に作成
+    @assessment = current_user.cognitive_distortion_assessments.build(distortion_params)
 
     if @assessment.save
       render json: format_assessment(@assessment), status: :created
@@ -19,7 +21,6 @@ class Api::V1::CognitiveDistortionAssessmentsController < ActionController::API
 
   private
 
-  # ここはフロントの送信データと一致していればOK
   def distortion_params
     params.require(:cognitive_distortion_assessment).permit(
       :all_or_nothing, :overgeneralization, :mental_filter,

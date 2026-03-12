@@ -1,12 +1,14 @@
 class Api::V1::Phq9AssessmentsController < ApplicationController
+  # Supabaseの認証を必須にする
+  before_action :authenticate_user!
+
   def index
-    # ユーザーに紐づくデータを古い順に取得
-    @phq9_assessments = Phq9Assessment.where(user_id: params[:user_id]).order(created_at: :asc)
+    # params[:user_id] ではなく、current_user に紐づくデータを取得
+    @phq9_assessments = current_user.phq9_assessments.order(created_at: :asc)
 
     render json: @phq9_assessments.map { |a|
       {
         id: a.id,
-        # フロントの uniqueData ロジックで使うため YYYY-MM-DD 形式
         date: a.created_at.in_time_zone("Tokyo").strftime("%Y-%m-%d"),
         score: a.total_score
       }
@@ -14,11 +16,10 @@ class Api::V1::Phq9AssessmentsController < ApplicationController
   end
 
   def create
-    # フロントの payload { phq9_assessment: { ... } } を受け取る
-    @phq9_assessment = Phq9Assessment.new(phq9_assessment_params)
-    @phq9_assessment.user_id = params[:user_id]
+    # current_user 経由でインスタンスを生成
+    @phq9_assessment = current_user.phq9_assessments.build(phq9_assessment_params)
 
-    # 第9項目の反応をフラグ化
+    # 第9項目の反応をフラグ化（自殺念慮のチェックなど）
     @phq9_assessment.suicidal_ideation = @phq9_assessment.q9.to_i > 0
 
     if @phq9_assessment.save

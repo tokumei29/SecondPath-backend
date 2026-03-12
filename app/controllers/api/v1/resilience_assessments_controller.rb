@@ -1,7 +1,11 @@
-# ApplicationController ではなく API 用のクラスを継承する
-class Api::V1::ResilienceAssessmentsController < ActionController::API
+class Api::V1::ResilienceAssessmentsController < ApplicationController
+  # SupabaseのJWT認証を必須にする
+  before_action :authenticate_user!
+
   def index
-    @resiliences = ResilienceAssessment.where(user_id: params[:user_id]).order(created_at: :asc)
+    # URLのparams[:user_id]ではなく、ログイン中の本人のデータだけを取得
+    @resiliences = current_user.resilience_assessments.order(created_at: :asc)
+
     render json: @resiliences.map { |r|
       {
         id: r.id,
@@ -15,8 +19,8 @@ class Api::V1::ResilienceAssessmentsController < ActionController::API
   end
 
   def create
-    @resilience = ResilienceAssessment.new(resilience_params)
-    @resilience.user_id = params[:user_id]
+    # current_user経由でインスタンスを生成（user_idが自動でセットされる）
+    @resilience = current_user.resilience_assessments.build(resilience_params)
 
     if @resilience.save
       render json: @resilience, status: :created
@@ -28,7 +32,6 @@ class Api::V1::ResilienceAssessmentsController < ActionController::API
   private
 
   def resilience_params
-    # ★ここを修正！フロントエンドの api.ts で送っている 'resilience_assessment' に合わせる
     params.require(:resilience_assessment).permit((1..9).map { |i| "q#{i}".to_sym })
   end
 end
