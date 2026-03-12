@@ -7,4 +7,5 @@ class User < ApplicationRecord
   has_many :resilience_assessments, foreign_key: :user_id, primary_key: :supabase_id, dependent: :destroy
   has_many :cognitive_distortion_assessments, foreign_key: :user_id, primary_key: :supabase_id, dependent: :destroy
   has_many :text_supports, foreign_key: :user_id, primary_key: :supabase_id, dependent: :destroy
+  has_many :user_records, foreign_key: :user_id, primary_key: :supabase_id, dependent: :destroy
 end

@@ -20,6 +20,12 @@ Rails.application.routes.draw do
           collection { get :stats }
           member { post :reply }
         end
+        resources :users, only: [ :index ] do
+          resources :user_records, only: [ :index, :create, :show ]
+          member do
+            get :activity # /api/v1/admin/users/:id/activity
+          end
+        end
       end
     end
   end
