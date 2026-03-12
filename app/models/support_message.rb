@@ -1,10 +1,12 @@
 class SupportMessage < ApplicationRecord
   belongs_to :text_support
 
-  validates :body, presence: true
-  validates :sender_type, presence: true, inclusion: { in: [ 0, 1 ] }
+  # 0: user, 1: counselor
+  enum :sender_type, { user: 0, counselor: 1 }
 
-  # メッセージも単体での削除を禁止する
+  validates :message, presence: true
+  validates :sender_type, presence: true
+
   before_destroy :readonly_check
 
   private

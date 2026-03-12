@@ -8,7 +8,12 @@ Rails.application.routes.draw do
       resources :phq9_assessments, only: [ :index, :create ]
       resources :resilience_assessments, only: [ :index, :create ]
       resources :cognitive_distortion_assessments, only: [ :index, :create ]
-      resources :text_supports, only: [ :index, :create ]
+      resources :text_supports, only: [ :index, :create, :show ] do
+        member do
+          # /api/v1/text_supports/:id/add_message
+          post :add_message
+        end
+      end
 
       namespace :admin do
         resources :text_supports, only: [ :index, :show, :update ] do

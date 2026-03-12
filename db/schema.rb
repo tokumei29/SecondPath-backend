@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_12_063837) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_12_104631) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -109,7 +109,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_063837) do
 
   create_table "support_messages", force: :cascade do |t|
     t.bigint "text_support_id", null: false
-    t.text "body"
+    t.text "message"
     t.integer "sender_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

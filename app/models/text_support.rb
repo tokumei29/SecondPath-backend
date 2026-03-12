@@ -1,11 +1,13 @@
 class TextSupport < ApplicationRecord
+  belongs_to :user
+  has_many :support_messages, dependent: :destroy
+
+  # 0: waiting (回答待ち), 1: replied (回答済み)
+  enum :status, { waiting: 0, replied: 1 }, default: :waiting
+
   validates :message, presence: true
   validates :user_id, presence: true
-  has_many :support_messages
 
-  validates :status, inclusion: { in: [ 0, 1, 2 ] }
-
-  # 運用上、削除を禁止するロジック（オプション）
   before_destroy :readonly_check
 
   private

@@ -1,5 +1,6 @@
 class Api::V1::Admin::TextSupportsController < ApplicationController
   skip_before_action :authenticate_user, raise: false
+
   # 管理者用の一覧
   def index
     @supports = TextSupport.all.order(status: :asc, created_at: :desc)
@@ -9,11 +10,19 @@ class Api::V1::Admin::TextSupportsController < ApplicationController
   # トーク履歴の詳細
   def show
     @support = TextSupport.find(params[:id])
-    @messages = @support.support_messages.order(created_at: :asc)
+    # DBのカラム名が message なので、フロントが期待する body に変換して返す
+    @messages = @support.support_messages.order(created_at: :asc).map do |m|
+      {
+        id: m.id,
+        body: m.message, # ここで message を body という名前で出力
+        sender_type: m.sender_type_before_type_cast, # 数値の1を返す
+        created_at: m.created_at
+      }
+    end
     render json: {
       status: "success",
       support: @support,
-      messages: @messages
+      messages: @messages # 変換済みの配列
     }
   end
 
@@ -22,9 +31,10 @@ class Api::V1::Admin::TextSupportsController < ApplicationController
     @support = TextSupport.find(params[:id])
 
     ActiveRecord::Base.transaction do
+      # params[:body] で届く内容を、DBカラムの message に保存
       @message = @support.support_messages.create!(
-        body: params[:body],
-        sender_type: 1 # Admin (あなた)
+        message: params[:body], # body ではなく message に修正！
+        sender_type: 1 # Admin
       )
       # 送信したらステータスを自動更新
       @support.update!(status: 1)
@@ -32,6 +42,8 @@ class Api::V1::Admin::TextSupportsController < ApplicationController
 
     render json: { status: "success", data: @message }
   rescue => e
+    # 失敗時に具体的な理由をログに出す
+    logger.error("Reply Error: #{e.message}")
     render json: { status: "error", message: e.message }, status: :unprocessable_entity
   end
 
