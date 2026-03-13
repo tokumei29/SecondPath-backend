@@ -1,13 +1,13 @@
-# config/initializers/cors.rb
-
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    # フロントエンドのURLを指定（開発環境なら localhost:3000 など）
-    origins "http://localhost:3001"
+    origins "http://localhost:3001",
+            "https://second-path-frontend-8qeaejcgy-nkun04183-7822s-projects.vercel.app", # 今の長いURL
+            "https://second-path-frontend.vercel.app",                                 # おそらくこれでもアクセスできるはず
+            "https://secondpath-app.jp"                                                 # お名前.comのドメイン
 
     resource "*",
       headers: :any,
       methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
-      credentials: true # クッキーや認証情報を送る場合は必須
+      credentials: true
   end
 end
