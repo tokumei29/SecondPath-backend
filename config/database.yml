@@ -14,7 +14,9 @@ test:
 
 production:
   <<: *default
-  # fetchを外して、ビルド時のKeyErrorを防止します
+  # DATABASE_URLから接続情報を読み込む
   url: <%= ENV["DATABASE_URL"] %>
-  # Render等のSSL接続を強制する場合の設定（必要に応じて）
+  # Supabase (Transaction Mode) のための必須設定
+  prepared_statements: false
+  # SSL接続を強制
   sslmode: 'require'
