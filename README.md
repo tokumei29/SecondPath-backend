@@ -1,5 +1,7 @@
 # README
 
+==> Available at your primary URL https://secondpath-backend.onrender.com
+
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
