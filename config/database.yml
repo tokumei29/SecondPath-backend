@@ -1,12 +1,12 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  # 先ほど作った .env の DATABASE_URL を使う設定
-  url: <%= ENV.fetch("DATABASE_URL") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
+  # ローカルでは.envがあればそれを使う、なければ直接指定も可
+  url: <%= ENV["DATABASE_URL"] %>
 
 test:
   <<: *default
@@ -14,3 +14,7 @@ test:
 
 production:
   <<: *default
+  # fetchを外して、ビルド時のKeyErrorを防止します
+  url: <%= ENV["DATABASE_URL"] %>
+  # Render等のSSL接続を強制する場合の設定（必要に応じて）
+  sslmode: 'require'
