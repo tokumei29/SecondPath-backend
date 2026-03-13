@@ -2,6 +2,7 @@ module Api
   module V1
     module Admin
       class UserRecordsController < ApplicationController
+        # 管理者のカルテ機能
         # POST /api/v1/admin/users/:user_id/user_records
         def create
           @record = UserRecord.new(
