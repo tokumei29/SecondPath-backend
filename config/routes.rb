@@ -1,9 +1,12 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
+      get "posts/index"
+      get "posts/show"
       get "me", to: "users#me"
 
       resource :profile, only: [ :show, :update ]
+      resources :posts, only: [ :index, :show ]
       resources :diaries, only: [ :index, :create, :show, :update, :destroy ]
       resources :phq9_assessments, only: [ :index, :create ]
       resources :resilience_assessments, only: [ :index, :create ]
@@ -16,6 +19,7 @@ Rails.application.routes.draw do
       end
 
       namespace :admin do
+        resources :posts, only: [ :index, :create, :destroy ]
         resources :text_supports, only: [ :index, :show, :update ] do
           collection { get :stats }
           member { post :reply }
