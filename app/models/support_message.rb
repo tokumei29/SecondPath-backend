@@ -1,5 +1,5 @@
 class SupportMessage < ApplicationRecord
-  belongs_to :text_support
+  belongs_to :text_support, touch: true
 
   # 0: user, 1: counselor
   enum :sender_type, { user: 0, counselor: 1 }

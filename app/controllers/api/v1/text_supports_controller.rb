@@ -5,8 +5,15 @@ module Api
 
       # 相談一覧を取得
       def index
-        @text_supports = current_user.text_supports.order(created_at: :desc)
-        render json: @text_supports.as_json(only: [ :id, :subject, :message, :status, :created_at ])
+        @supports = TextSupport.where(user_id: @current_user.id).includes(:support_messages).order(updated_at: :desc)
+
+        render json: @supports.map { |support|
+          last_msg = support.support_messages.last
+          support.as_json.merge({
+            last_message_sender_type: last_msg&.sender_type, # ここを追加
+            last_message_at: last_msg&.created_at           # ここを追加
+          })
+        }
       end
 
       # 特定の相談とそのチャット履歴を取得
