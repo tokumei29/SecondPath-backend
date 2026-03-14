@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       get "posts/index"
       get "posts/show"
       get "me", to: "users#me"
-
+      resources :user_records, only: [ :index, :show ]
       resource :profile, only: [ :show, :update ]
       resources :posts, only: [ :index, :show ]
       resources :diaries, only: [ :index, :create, :show, :update, :destroy ]
@@ -21,12 +21,13 @@ Rails.application.routes.draw do
       namespace :admin do
         resources :memos
         resources :posts, only: [ :index, :create, :destroy ]
+        resources :user_records, only: [ :update, :destroy ]
         resources :text_supports, only: [ :index, :show, :update ] do
           collection { get :stats }
           member { post :reply }
         end
         resources :users, only: [ :index ] do
-          resources :user_records, only: [ :index, :create, :show ]
+          resources :user_records, only: [ :index, :create, :show]
           member do
             get :activity # /api/v1/admin/users/:id/activity
           end
