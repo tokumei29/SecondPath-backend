@@ -8,8 +8,13 @@ module Api
 
         # GET /api/v1/admin/memos
         def index
-          # 最新のメモが上に来るようにソート
           @memos = Memo.order(date: :desc, created_at: :desc)
+
+          # 名前検索のみに限定
+          if params[:q].present?
+            @memos = @memos.where("user_name LIKE ?", "%#{params[:q]}%")
+          end
+
           render json: @memos
         end
 
