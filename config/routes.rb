@@ -2,9 +2,11 @@ Rails.application.routes.draw do
   get '/health_check', to: proc { [200, {}, ['ok']] }
   namespace :api do
     namespace :v1 do
+      get "dashboards/show"
       get "posts/index"
       get "posts/show"
       get "me", to: "users#me"
+      resource :dashboard, only: [:show]
       resources :user_records, only: [ :index, :show ]
       resource :profile, only: [ :show, :update ]
       resources :posts, only: [ :index, :show ]
