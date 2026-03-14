@@ -5,12 +5,14 @@ module Api
       before_action :authenticate_user!
 
       def index
-        @records = UserRecord.where(user_id: current_user.id).order(created_at: :desc)
-        # created_atをフロントが期待する「date」というキー名で返す
+        # created_at（時間）が新しい順、かつ id（保存順）が新しい順に並べる
+        @records = UserRecord.where(user_id: current_user.id)
+                            .order(created_at: :desc, id: :desc)
+
         render json: @records.map { |r| 
           {
             id: r.id,
-            date: r.created_at, # ここで名前を date に統一
+            date: r.created_at, 
             content: r.content
           }
         }

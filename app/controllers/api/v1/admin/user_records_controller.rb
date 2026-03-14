@@ -23,8 +23,10 @@ module Api
 
         # GET /api/v1/admin/users/:user_id/user_records
         def index
-          @records = UserRecord.where(user_id: params[:user_id]).order(created_at: :desc)
-          # プロフィールから名前を取得するロジックは既存のものを維持
+          # created_at で降順、同じ時間なら id で降順（新しいものが必ず上）
+          @records = UserRecord.where(user_id: params[:user_id])
+                              .order(created_at: :desc, id: :desc)
+
           user = User.find_by(supabase_id: params[:user_id])
 
           render json: {
