@@ -5,30 +5,30 @@ module Api
       before_action :authenticate_user!
 
       def show
-  user = current_user
-  profile = user.profile
+        user = current_user
+        profile = user.profile
 
-  # ★ データの「中身」ではなく「存在するか」だけをチェック
-  has_diaries = user.diaries.exists?
+        # ★ データの「中身」ではなく「存在するか」だけをチェック
+        has_diaries = user.diaries.exists?
 
-  # 最新1件のアドバイス（これはHomePageのアラート表示に使うので必要）
-  latest_advice = user.user_records.order(date: :desc).first
+        # 最新1件のアドバイス（これはHomePageのアラート表示に使うので必要）
+        latest_advice = user.user_records.order(date: :desc).first
 
-  has_unread_chat = user.text_supports.exists?(status: "replied")
+        has_unread_chat = user.text_supports.exists?(status: "replied")
 
-  # ★ 仕様：プロフィールが初期状態で、かつ日記が1件もないならガイドを表示
-  show_guide = profile_initial?(profile) && !has_diaries
+        # ★ 仕様：プロフィールが初期状態で、かつ日記が1件もないならガイドを表示
+        show_guide = profile_initial?(profile) && !has_diaries
 
-  render json: {
-    user_name: profile&.name.presence || "ユーザー",
-    profile: profile, # ProfileSectionで使うため
-    # diaries: diaries, # ← Layoutが呼ぶ分には不要！
-    has_diaries: has_diaries,
-    latest_advice: latest_advice,
-    has_unread_chat: has_unread_chat,
-    show_guide: show_guide
-  }
-end
+        render json: {
+          user_name: profile&.name.presence || "ユーザー",
+          profile: profile, # ProfileSectionで使うため
+          # diaries: diaries, # ← Layoutが呼ぶ分には不要！
+          has_diaries: has_diaries,
+          latest_advice: latest_advice,
+          has_unread_chat: has_unread_chat,
+          show_guide: show_guide
+        }
+      end
 
       private
 
