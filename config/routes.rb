@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get '/health_check', to: proc { [200, {}, ['ok']] }
   namespace :api do
     namespace :v1 do
       get "posts/index"
