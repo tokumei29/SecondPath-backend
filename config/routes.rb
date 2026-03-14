@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       end
 
       namespace :admin do
+        resources :memos
         resources :posts, only: [ :index, :create, :destroy ]
         resources :text_supports, only: [ :index, :show, :update ] do
           collection { get :stats }

@@ -2,6 +2,10 @@
 
 ==> Available at your primary URL https://secondpath-backend.onrender.com
 
+整形
+bundle exec rubocop -a
+
+
 This README would normally document whatever steps are necessary to get the
 application up and running.
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_13_044823) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_14_060503) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -55,6 +55,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_044823) do
     t.text "good_thing"
     t.text "improvement"
     t.text "tomorrow_goal"
+  end
+
+  create_table "memos", force: :cascade do |t|
+    t.string "user_name"
+    t.date "date"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "phq9_assessments", force: :cascade do |t|
