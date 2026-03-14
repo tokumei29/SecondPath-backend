@@ -9,10 +9,10 @@ module Api
         @records = UserRecord.where(user_id: current_user.id)
                             .order(created_at: :desc, id: :desc)
 
-        render json: @records.map { |r| 
+        render json: @records.map { |r|
           {
             id: r.id,
-            date: r.created_at, 
+            date: r.created_at,
             content: r.content
           }
         }

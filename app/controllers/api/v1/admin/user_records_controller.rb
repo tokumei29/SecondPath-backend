@@ -3,7 +3,7 @@ module Api
     module Admin
       class UserRecordsController < ApplicationController
         # authenticate_admin! などがあればここに追加
-        before_action :set_user_record, only: [:update, :destroy]
+        before_action :set_user_record, only: [ :update, :destroy ]
 
         # POST /api/v1/admin/users/:user_id/user_records
         def create
