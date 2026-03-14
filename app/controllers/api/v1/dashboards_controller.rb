@@ -1,41 +1,57 @@
-# app/controllers/api/v1/dashboards_controller.rb
 module Api
   module V1
     class DashboardsController < ApplicationController
-      # ★ これを必ず有効にする（または既存の認証用メソッドを呼ぶ）
-      # これがないと current_user が nil になり、さっきのエラーが出ます
+      # 認証を必須にする（current_userを確定させる）
       before_action :authenticate_user!
 
       def show
-        # current_user が確実に存在することを前提に処理できる
-        profile = current_user.profile
-        diaries = current_user.diaries.order(created_at: :desc).limit(5)
-        latest_advice = current_user.user_records.order(date: :desc).first
+  user = current_user
+  profile = user.profile
 
-        # 未読があるかどうかの判定
-        has_unread_chat = current_user.text_supports.exists?(status: "replied")
+  # ★ データの「中身」ではなく「存在するか」だけをチェック
+  has_diaries = user.diaries.exists?
 
-        # ガイドを出すかどうかの判定（ロジックをここに集約）
-        show_guide = profile_empty?(profile) && diaries.empty?
+  # 最新1件のアドバイス（これはHomePageのアラート表示に使うので必要）
+  latest_advice = user.user_records.order(date: :desc).first
 
-        render json: {
-          user_name: profile&.name || "ユーザー",
-          profile: profile,
-          diaries: diaries,
-          latest_advice: latest_advice,
-          has_unread_chat: has_unread_chat,
-          show_guide: show_guide
-        }
-      end
+  has_unread_chat = user.text_supports.exists?(status: "replied")
+
+  # ★ 仕様：プロフィールが初期状態で、かつ日記が1件もないならガイドを表示
+  show_guide = profile_initial?(profile) && !has_diaries
+
+  render json: {
+    user_name: profile&.name.presence || "ユーザー",
+    profile: profile, # ProfileSectionで使うため
+    # diaries: diaries, # ← Layoutが呼ぶ分には不要！
+    has_diaries: has_diaries,
+    latest_advice: latest_advice,
+    has_unread_chat: has_unread_chat,
+    show_guide: show_guide
+  }
+end
 
       private
 
-      def profile_empty?(data)
-        return true if data.nil?
-        data.name.blank? && [
-          data.strengths, data.weaknesses, data.likes,
-          data.hobbies, data.short_term_goals, data.long_term_goals
-        ].all?(&:blank?)
+      # 元のJS版 isProfileEmpty のロジックを正確に移植
+      def profile_initial?(profile)
+        return true if profile.nil?
+
+        # 1. 名前があるか（空白文字を除外）
+        has_name = profile.name.present?
+
+        # 2. 各項目に中身（配列の要素や文字列）があるか
+        # JS版の .some(key => data[key] && data[key].length > 0) を再現
+        has_content = [
+          profile.strengths,
+          profile.weaknesses,
+          profile.likes,
+          profile.hobbies,
+          profile.short_term_goals,
+          profile.long_term_goals
+        ].any? { |field| field.present? } # present? は [] や "" を false と判定してくれる
+
+        # 名前もなく、コンテンツもなければ「初期状態（Initial）」
+        !has_name && !has_content
       end
     end
   end
