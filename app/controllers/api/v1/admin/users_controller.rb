@@ -12,7 +12,16 @@ module Api
 
         # GET /api/v1/admin/users
         def index
-          @users = User.includes(:profile).all.order(created_at: :desc)
+          # クエリがある場合は、profilesテーブルのnameで絞り込み
+          if params[:q].present?
+            # profileと結合して検索
+            @users = User.joins(:profile).where("profiles.name LIKE ?", "%#{params[:q]}%")
+          else
+            @users = User.includes(:profile).all
+          end
+
+          @users = @users.order(created_at: :desc)
+
           render json: {
             status: "success",
             data: @users.map { |user|

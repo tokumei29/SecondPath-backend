@@ -2,6 +2,7 @@ module Api
   module V1
     module Admin
       class UserRecordsController < ApplicationController
+        # カルテ機能
         # authenticate_admin! などがあればここに追加
         before_action :set_user_record, only: [ :update, :destroy ]
 
