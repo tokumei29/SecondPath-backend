@@ -1,44 +1,45 @@
 module Api
   module V1
     class DiariesController < ApplicationController
-      # Supabase認証を必須にする
       before_action :authenticate_user!
 
       # GET /api/v1/diaries
       def index
-        # params[:user_id] を使わず、current_user の日記だけを取得
-        @diaries = current_user.diaries.order(created_at: :desc)
-        render json: { status: "success", data: @diaries }
+        diaries = current_user.diaries.order(created_at: :desc)
+        render json: { status: "success", data: diaries }
       end
 
       # POST /api/v1/diaries
       def create
-        # current_user に紐づけて作成
-        @diary = current_user.diaries.build(diary_params)
+        # フロントから id や user_id が混じっていても .except で除外。
+        # current_user.diaries.build により、正しい user_id を強制的にセットします。
+        diary = current_user.diaries.build(diary_params.except(:id, :user_id, :created_at, :updated_at))
 
-        if @diary.save
-          render json: { status: "success", data: @diary }, status: :created
+        if diary.save
+          render json: { status: "success", data: diary }, status: :created
         else
-          render json: { status: "error", errors: @diary.errors.full_messages }, status: :unprocessable_entity
+          render json: { status: "error", errors: diary.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       # GET /api/v1/diaries/:id
       def show
-        # 他人の日記を見れないよう、current_user の範囲内で検索
-        @diary = current_user.diaries.find(params[:id])
-        render json: { status: "success", data: @diary }
+        diary = current_user.diaries.find(params[:id])
+        render json: { status: "success", data: diary }
       rescue ActiveRecord::RecordNotFound
         render json: { status: "error", message: "Not found" }, status: :not_found
       end
 
       # PATCH/PUT /api/v1/diaries/:id
       def update
-        @diary = current_user.diaries.find(params[:id])
-        if @diary.update(diary_params)
-          render json: { status: "success", data: @diary }
+        # 自分の日記の中から ID で検索。他人のIDなら見つからずエラー（安全）
+        diary = current_user.diaries.find(params[:id])
+
+        # 更新時も id や user_id を除外。これで ID の不整合によるエラーを防ぎます。
+        if diary.update(diary_params.except(:id, :user_id, :created_at, :updated_at))
+          render json: { status: "success", data: diary }
         else
-          render json: { status: "error", errors: @diary.errors.full_messages }, status: :unprocessable_entity
+          render json: { status: "error", errors: diary.errors.full_messages }, status: :unprocessable_entity
         end
       rescue ActiveRecord::RecordNotFound
         render json: { status: "error", message: "Not found" }, status: :not_found
@@ -46,8 +47,8 @@ module Api
 
       # DELETE /api/v1/diaries/:id
       def destroy
-        @diary = current_user.diaries.find(params[:id])
-        if @diary.destroy
+        diary = current_user.diaries.find(params[:id])
+        if diary.destroy
           render json: { status: "success", message: "Deleted successfully" }
         else
           render json: { status: "error", message: "Failed to delete" }, status: :unprocessable_entity

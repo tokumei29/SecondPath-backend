@@ -3,19 +3,22 @@ class Api::V1::CognitiveDistortionAssessmentsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    # params[:user_id] ではなく、トークンから判別した本人のデータのみ取得
-    @assessments = current_user.cognitive_distortion_assessments.order(created_at: :asc)
-    render json: @assessments.map { |a| format_assessment(a) }
+    # 常に current_user に紐づく本人のデータのみ取得
+    assessments = current_user.cognitive_distortion_assessments.order(created_at: :asc)
+    render json: assessments.map { |a| format_assessment(a) }
   end
 
   def create
-    # current_user に紐づけて安全に作成
-    @assessment = current_user.cognitive_distortion_assessments.build(distortion_params)
+    # フロントから送られてくる id や user_id, タイムスタンプ類を .except で完全に除外。
+    # current_user 経由で build することで、正しい user_id を強制セットし衝突を回避します。
+    assessment = current_user.cognitive_distortion_assessments.build(
+      distortion_params.except(:id, :user_id, :created_at, :updated_at)
+    )
 
-    if @assessment.save
-      render json: format_assessment(@assessment), status: :created
+    if assessment.save
+      render json: format_assessment(assessment), status: :created
     else
-      render json: { errors: @assessment.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: assessment.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

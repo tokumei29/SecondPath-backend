@@ -16,7 +16,7 @@ module Api
         # 常に「自分のプロフィール」を更新
         profile = Profile.find_or_initialize_by(user_id: current_user.id)
 
-        if profile.update(profile_params)
+        if profile.update(profile_params.except(:id, :user_id, :created_at, :updated_at))
           render json: profile
         else
           render json: { errors: profile.errors.full_messages }, status: :unprocessable_entity
@@ -27,7 +27,7 @@ module Api
 
       def profile_params
         params.require(:profile).permit(
-          :name,
+          :name, :has_seen_guide,
           { strengths: [] }, { weaknesses: [] }, { likes: [] },
           { hobbies: [] }, { short_term_goals: [] }, { long_term_goals: [] }
         )

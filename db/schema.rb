@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_14_060503) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_18_060709) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -101,6 +101,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_14_060503) do
     t.string "long_term_goals", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "has_seen_guide", default: false, null: false
   end
 
   create_table "resilience_assessments", force: :cascade do |t|
