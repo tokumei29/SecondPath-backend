@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_18_060709) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -155,7 +155,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_18_060709) do
     t.string "supabase_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["supabase_id"], name: "index_users_on_supabase_id"
+    t.index ["supabase_id"], name: "index_users_on_supabase_id", unique: true
   end
 
   add_foreign_key "support_messages", "text_supports"
