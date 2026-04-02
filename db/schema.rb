@@ -11,22 +11,44 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
-  create_schema "auth"
-  create_schema "extensions"
-  create_schema "graphql"
-  create_schema "graphql_public"
-  create_schema "pgbouncer"
-  create_schema "realtime"
-  create_schema "storage"
-  create_schema "vault"
+  # NOTE:
+  # Supabase由来のスキーマが `schema:load` のタイミングで既に存在すると失敗することがあるため、
+  # 既に存在する場合はスキップします（ローカルDocker向け）。
+  %w[
+    auth
+    extensions
+    graphql
+    graphql_public
+    pgbouncer
+    realtime
+    storage
+    vault
+  ].each do |schema_name|
+    begin
+      create_schema schema_name
+    rescue ActiveRecord::StatementInvalid
+      # schema already exists, etc.
+    end
+  end
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "extensions.pg_stat_statements"
-  enable_extension "extensions.pgcrypto"
-  enable_extension "extensions.uuid-ossp"
-  enable_extension "graphql.pg_graphql"
-  enable_extension "pg_catalog.plpgsql"
-  enable_extension "vault.supabase_vault"
+  # NOTE:
+  # ローカルのPostgreSQL（特にDockerの公式イメージ）では、Supabase固有の拡張が入っていないことがあります。
+  # `db:prepare` / `db:schema:load` が落ちるのを防ぐため、利用不可ならスキップします。
+  [
+    "extensions.pg_stat_statements",
+    "extensions.pgcrypto",
+    "extensions.uuid-ossp",
+    "graphql.pg_graphql",
+    "pg_catalog.plpgsql",
+    "vault.supabase_vault"
+  ].each do |ext|
+    begin
+      enable_extension ext
+    rescue ActiveRecord::StatementInvalid
+      # Extension not installed on this Postgres. Safe to skip for local dev.
+    end
+  end
 
   create_table "cognitive_distortion_assessments", force: :cascade do |t|
     t.integer "all_or_nothing", default: 0, null: false
