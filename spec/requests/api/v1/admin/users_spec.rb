@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Api::V1::Admin::Users", type: :request do
   describe "GET /api/v1/admin/users" do
-    it "returns success with a list of users" do
+    it "成功し、ユーザー一覧を返す" do
       u = create(:user)
       create(:profile, owner: u, name: "Admin List User")
 
@@ -16,7 +16,7 @@ RSpec.describe "Api::V1::Admin::Users", type: :request do
       expect(names).to include("Admin List User")
     end
 
-    it "filters by profile name when q is present" do
+    it "q があるときプロフィール名で絞り込む" do
       alice = create(:user)
       create(:profile, owner: alice, name: "Alice Unique Xyz")
       bob = create(:user)
@@ -32,7 +32,7 @@ RSpec.describe "Api::V1::Admin::Users", type: :request do
   end
 
   describe "GET /api/v1/admin/users/:id/activity" do
-    it "returns activity payload for the user" do
+    it "ユーザーのアクティビティ用ペイロードを返す" do
       user = create(:user)
       create(:profile, owner: user, name: "Active")
 
@@ -47,7 +47,7 @@ RSpec.describe "Api::V1::Admin::Users", type: :request do
       expect(json).to have_key("resilience_scores")
     end
 
-    it "returns 404 for unknown supabase_id" do
+    it "存在しない supabase_id なら 404 を返す" do
       get activity_api_v1_admin_user_path(SecureRandom.uuid)
 
       expect(response).to have_http_status(:not_found)

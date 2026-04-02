@@ -5,13 +5,13 @@ RSpec.describe "Api::V1::Profiles", type: :request do
   let(:auth_headers) { { "X-User-Id" => user.supabase_id } }
 
   describe "GET /api/v1/profile" do
-    it "returns 401 without X-User-Id" do
+    it "X-User-Id が無いとき 401 を返す" do
       get api_v1_profile_path
 
       expect(response).to have_http_status(:unauthorized)
     end
 
-    it "creates and returns a profile for the current user" do
+    it "現在ユーザーのプロフィールを作成して返す" do
       expect {
         get api_v1_profile_path, headers: auth_headers
       }.to change(Profile, :count).by(1)
@@ -21,7 +21,7 @@ RSpec.describe "Api::V1::Profiles", type: :request do
       expect(body["user_id"]).to eq(user.supabase_id)
     end
 
-    it "returns the existing profile" do
+    it "既存のプロフィールを返す" do
       create(:profile, owner: user, name: "Existing")
 
       get api_v1_profile_path, headers: auth_headers
@@ -32,7 +32,7 @@ RSpec.describe "Api::V1::Profiles", type: :request do
   end
 
   describe "PATCH /api/v1/profile" do
-    it "updates the current user's profile" do
+    it "現在ユーザーのプロフィールを更新する" do
       create(:profile, owner: user, name: "Old")
 
       patch api_v1_profile_path,

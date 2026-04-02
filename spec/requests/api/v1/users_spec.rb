@@ -2,14 +2,14 @@ require "rails_helper"
 
 RSpec.describe "Api::V1::Users", type: :request do
   describe "GET /api/v1/me" do
-    it "returns 401 when X-User-Id is missing" do
+    it "X-User-Id が無いとき 401 を返す" do
       get api_v1_me_path
 
       expect(response).to have_http_status(:unauthorized)
       expect(JSON.parse(response.body)).to eq("error" => "User ID missing")
     end
 
-    it "returns success and creates the user when X-User-Id is present" do
+    it "X-User-Id があるとき成功し、ユーザーが作成される" do
       uuid = SecureRandom.uuid
 
       expect {
@@ -23,7 +23,7 @@ RSpec.describe "Api::V1::Users", type: :request do
       expect(body.dig("user", "id")).to eq(uuid)
     end
 
-    it "returns the existing user on subsequent requests" do
+    it "2回目以降は既存ユーザーを返す" do
       user = create(:user)
       get api_v1_me_path, headers: { "X-User-Id" => user.supabase_id }
 

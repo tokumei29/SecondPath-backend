@@ -1,16 +1,16 @@
 require "rails_helper"
 
 RSpec.describe ResilienceAssessment, type: :model do
-  describe "validations" do
-    it "requires user_id" do
+  describe "バリデーション" do
+    it "user_id が必須である" do
       assessment = build(:resilience_assessment, user_id: nil)
       expect(assessment).not_to be_valid
       expect(assessment.errors[:user_id]).to be_present
     end
   end
 
-  describe "before_save" do
-    it "derives factor scores and total from q1..q9" do
+  describe "保存前コールバック" do
+    it "保存時に q1〜q9 から因子スコアと合計を算出する" do
       assessment = create(
         :resilience_assessment,
         q1: 1, q2: 2, q3: 3,

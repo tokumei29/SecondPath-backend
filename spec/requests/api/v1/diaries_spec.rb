@@ -5,13 +5,13 @@ RSpec.describe "Api::V1::Diaries", type: :request do
   let(:auth_headers) { { "X-User-Id" => user.supabase_id } }
 
   describe "GET /api/v1/diaries" do
-    it "returns 401 without X-User-Id" do
+    it "X-User-Id が無いとき 401 を返す" do
       get api_v1_diaries_path
 
       expect(response).to have_http_status(:unauthorized)
     end
 
-    it "returns the current user's diaries" do
+    it "現在ユーザーの日記だけを返す" do
       other = create(:user)
       create(:diary, owner: user, content: "Mine")
       create(:diary, owner: other, content: "Theirs")
@@ -28,7 +28,7 @@ RSpec.describe "Api::V1::Diaries", type: :request do
   end
 
   describe "POST /api/v1/diaries" do
-    it "creates a diary scoped to the current user" do
+    it "現在ユーザーに紐づく日記を作成する" do
       expect {
         post api_v1_diaries_path,
              params: { diary: { content: "Today", mood: "ok" } },
@@ -45,7 +45,7 @@ RSpec.describe "Api::V1::Diaries", type: :request do
   end
 
   describe "GET /api/v1/diaries/:id" do
-    it "returns 404 for another user's diary" do
+    it "他人の日記は 404 を返す" do
       other_diary = create(:diary, owner: create(:user))
 
       get api_v1_diary_path(other_diary), headers: auth_headers
@@ -53,7 +53,7 @@ RSpec.describe "Api::V1::Diaries", type: :request do
       expect(response).to have_http_status(:not_found)
     end
 
-    it "returns the diary when it belongs to the current user" do
+    it "自分の日記なら内容を返す" do
       diary = create(:diary, owner: user, content: "Secret")
 
       get api_v1_diary_path(diary), headers: auth_headers

@@ -7,16 +7,16 @@ RSpec.describe CognitiveDistortionAssessment, type: :model do
     should_statements labeling personalization
   ].freeze
 
-  describe "validations" do
-    it "requires user_id" do
+  describe "バリデーション" do
+    it "user_id が必須である" do
       assessment = build(:cognitive_distortion_assessment, user_id: nil)
       expect(assessment).not_to be_valid
       expect(assessment.errors[:user_id]).to be_present
     end
   end
 
-  describe "before_save" do
-    it "sets total_score to the sum of factor columns" do
+  describe "保存前コールバック" do
+    it "保存時に因子カラムの合計を total_score に入れる" do
       assessment = create(:cognitive_distortion_assessment)
       FACTORS.each { |f| assessment[f] = 1 }
       assessment.save!
