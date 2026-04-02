@@ -65,7 +65,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
     t.datetime "updated_at", null: false
     t.integer "total_score"
     t.uuid "user_id", null: false
-    t.index ["user_id"], name: "index_cognitive_distortion_assessments_on_user_id"
+    t.index [ "user_id" ], name: "index_cognitive_distortion_assessments_on_user_id"
   end
 
   create_table "diaries", force: :cascade do |t|
@@ -102,7 +102,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "user_id"
-    t.index ["user_id"], name: "index_phq9_assessments_on_user_id"
+    t.index [ "user_id" ], name: "index_phq9_assessments_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -151,7 +151,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
     t.integer "sender_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["text_support_id"], name: "index_support_messages_on_text_support_id"
+    t.index [ "text_support_id" ], name: "index_support_messages_on_text_support_id"
   end
 
   create_table "text_supports", force: :cascade do |t|
@@ -170,14 +170,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_user_records_on_user_id"
+    t.index [ "user_id" ], name: "index_user_records_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "supabase_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["supabase_id"], name: "index_users_on_supabase_id", unique: true
+    t.index [ "supabase_id" ], name: "index_users_on_supabase_id", unique: true
   end
 
   add_foreign_key "support_messages", "text_supports"

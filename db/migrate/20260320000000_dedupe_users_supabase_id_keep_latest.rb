@@ -25,7 +25,7 @@ class DedupeUsersSupabaseIdKeepLatest < ActiveRecord::Migration[8.0]
     # Railsのバージョン差で `index_exists?` / `remove_index` の引数形式が不整合になり得るため、
     # DBの実在するindexを見てから名前指定でremoveする。
     indexes = connection.indexes(:users)
-    supa_index = indexes.find { |i| i.columns == ["supabase_id"] }
+    supa_index = indexes.find { |i| i.columns == [ "supabase_id" ] }
     remove_index :users, name: supa_index.name if supa_index
 
     # UNIQUE index を貼る（この名前で追加する）
@@ -41,4 +41,3 @@ class DedupeUsersSupabaseIdKeepLatest < ActiveRecord::Migration[8.0]
     add_index :users, :supabase_id, unique: false, name: "index_users_on_supabase_id" unless index_exists?(:users, :supabase_id, name: "index_users_on_supabase_id")
   end
 end
-
