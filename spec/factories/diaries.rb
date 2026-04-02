@@ -1,7 +1,11 @@
 FactoryBot.define do
   factory :diary do
-    user_id { "MyString" }
-    content { "MyText" }
-    mood { "MyString" }
+    transient do
+      owner { nil }
+    end
+
+    user_id { (owner || create(:user)).supabase_id }
+    content { "Diary content" }
+    mood { "calm" }
   end
 end

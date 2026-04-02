@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :user do
-    id { "MyString" }
-    supabase_id { "MyString" }
+    supabase_id { SecureRandom.uuid }
   end
 end

@@ -11,6 +11,9 @@ development:
 test:
   <<: *default
   database: secondpath_backend_test
+  # `DATABASE_URL` が設定されている（例: Supabase）と test でもそちらに接続してしまうことがあるため、
+  # test は専用URLがある場合のみそれを使い、なければ `database:` 設定を使う。
+  url: <%= ENV["TEST_DATABASE_URL"] %>
 
 production:
   <<: *default

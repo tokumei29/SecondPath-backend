@@ -1,5 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Memo, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "persists with attributes" do
+    memo = create(:memo, user_name: "佐藤", date: Date.current, content: "メモ")
+    expect(memo.reload.user_name).to eq("佐藤")
+  end
 end

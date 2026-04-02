@@ -6,11 +6,11 @@ class Profile < ApplicationRecord
   private
 
   def set_defaults
-    self.strengths ||= [ "", "", "" ]
-    self.weaknesses ||= [ "", "", "" ]
-    self.likes ||= [ "", "", "" ]
-    self.hobbies ||= [ "", "", "" ]
-    self.short_term_goals ||= [ "", "", "" ]
-    self.long_term_goals ||= [ "", "", "" ]
+    self.strengths = [ "", "", "" ] if strengths.blank?
+    self.weaknesses = [ "", "", "" ] if weaknesses.blank?
+    self.likes = [ "", "", "" ] if likes.blank?
+    self.hobbies = [ "", "", "" ] if hobbies.blank?
+    self.short_term_goals = [ "", "", "" ] if short_term_goals.blank?
+    self.long_term_goals = [ "", "", "" ] if long_term_goals.blank?
   end
 end

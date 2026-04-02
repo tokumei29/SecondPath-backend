@@ -1,5 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Diary, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "persists for a user" do
+    diary = create(:diary, owner: create(:user), content: "日記")
+    expect(diary.reload.content).to eq("日記")
+  end
 end

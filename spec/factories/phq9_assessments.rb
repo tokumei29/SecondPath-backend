@@ -1,6 +1,7 @@
 FactoryBot.define do
-  factory :resilience_assessment do
+  factory :phq9_assessment do
     user_id { create(:user).supabase_id }
+    total_score { 10 }
     q1 { 1 }
     q2 { 1 }
     q3 { 1 }
@@ -10,5 +11,6 @@ FactoryBot.define do
     q7 { 1 }
     q8 { 1 }
     q9 { 1 }
+    suicidal_ideation { false }
   end
 end

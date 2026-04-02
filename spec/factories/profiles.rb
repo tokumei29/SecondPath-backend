@@ -1,12 +1,10 @@
 FactoryBot.define do
   factory :profile do
-    user_id { "MyString" }
-    name { "MyString" }
-    strengths { "MyString" }
-    weaknesses { "MyString" }
-    likes { "MyString" }
-    hobbies { "MyString" }
-    short_term_goals { "MyString" }
-    long_term_goals { "MyString" }
+    transient do
+      owner { create(:user) }
+    end
+
+    user_id { owner.supabase_id }
+    name { "Test user" }
   end
 end
