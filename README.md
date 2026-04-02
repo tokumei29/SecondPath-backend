@@ -94,5 +94,5 @@ docker compose run --rm api bundle exec rspec
 ## 🔗 Links
 
 - **API (Render)**: `https://secondpath-backend.onrender.com`
-- **Frontend (example)**: `second-path-frontend.vercel.app`
+- **Frontend (vercel)**: `https://secondpath-app.jp`
 
