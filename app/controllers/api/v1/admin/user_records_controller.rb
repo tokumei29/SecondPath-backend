@@ -38,7 +38,7 @@ module Api
 
         # ★ 追加: PATCH/PUT /api/v1/admin/user_records/:id
         def update
-          if @user_record.update(user_record_params)
+          if @user_record.update(user_record_update_attrs)
             render json: @user_record
           else
             render json: { errors: @user_record.errors.full_messages }, status: :unprocessable_entity
@@ -57,9 +57,13 @@ module Api
           @user_record = UserRecord.find(params[:id])
         end
 
-        def user_record_params
-          # 編集時は内容(content)のみ許可。日付も変えたい場合は :created_at を追加
-          params.require(:user_record).permit(:content)
+        # create と同様、JSON はルート直下の { content, date }（axios のデフォルト）
+        def user_record_update_attrs
+          permitted = params.permit(:content, :date)
+          attrs = {}
+          attrs[:content] = permitted[:content] if permitted.key?(:content)
+          attrs[:created_at] = Time.zone.parse(permitted[:date]) if permitted[:date].present?
+          attrs
         end
       end
     end
