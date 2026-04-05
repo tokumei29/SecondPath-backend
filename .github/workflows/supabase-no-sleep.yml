@@ -1,1 +1,19 @@
+# Supabase 無料プランは長期間アクセスがないとプロジェクトがスリープするため、
+# デモ用 Render バックエンド経由で DB に届くリクエストを 1 日 1 回送る。
+name: Supabase keep-alive
 
+on:
+  schedule:
+    # 毎日 03:17 UTC（GitHub Actions の cron は UTC のみ）
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: GET /api/v1/posts（DB / Supabase に接続）
+        run: |
+          curl -fsS --connect-timeout 30 --max-time 120 \
+            "https://secondpath-backend-1.onrender.com/api/v1/posts"
