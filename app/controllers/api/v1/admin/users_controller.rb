@@ -17,7 +17,7 @@ module Api
             # profileと結合して検索
             @users = User.joins(:profile).where("profiles.name LIKE ?", "%#{params[:q]}%")
           else
-            @users = User.includes(:profile).all
+            @users = User.includes(:profile)
           end
 
           @users = @users.order(created_at: :desc)
@@ -29,7 +29,8 @@ module Api
                 id: user.id,
                 name: user.profile&.name || "ユーザー(#{user.id[0..7]})",
                 identifier: user.respond_to?(:uid) ? user.uid : user.id,
-                created_at: user.created_at
+                created_at: user.created_at,
+                account_withdrawn_at: user.account_withdrawn_at&.iso8601(3)
               }
             }
           }

@@ -3,8 +3,15 @@ class Api::V1::Admin::TextSupportsController < ApplicationController
 
   # 管理者用の一覧
   def index
-    @supports = TextSupport.all.order(status: :asc, created_at: :desc)
-    render json: { status: "success", data: @supports }
+    @supports = TextSupport.includes(:user).order(status: :asc, created_at: :desc)
+    render json: {
+      status: "success",
+      data: @supports.map { |s|
+        s.as_json.merge(
+          "user_account_withdrawn_at" => s.user&.account_withdrawn_at&.iso8601(3)
+        )
+      }
+    }
   end
 
   # トーク履歴の詳細

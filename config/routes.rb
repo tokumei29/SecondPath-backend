@@ -19,6 +19,9 @@ Rails.application.routes.draw do
         end
       end
 
+      # Next.js 退会フローから users.account_withdrawn_at を立てる（共有シークレット必須）
+      post "internal/mark_account_withdrawn", to: "internal/account_withdrawals#create"
+
       namespace :admin do
         resources :memos
         resources :posts, only: [ :index, :create, :destroy ]

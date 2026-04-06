@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_06_120000) do
   # NOTE:
   # Supabase由来のスキーマが `schema:load` のタイミングで既に存在すると失敗することがあるため、
   # 既に存在する場合はスキップします（ローカルDocker向け）。
@@ -177,6 +177,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_20_000000) do
     t.string "supabase_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "account_withdrawn_at"
     t.index [ "supabase_id" ], name: "index_users_on_supabase_id", unique: true
   end
 
