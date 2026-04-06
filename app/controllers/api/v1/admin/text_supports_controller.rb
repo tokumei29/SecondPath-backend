@@ -8,7 +8,7 @@ class Api::V1::Admin::TextSupportsController < ApplicationController
       status: "success",
       data: @supports.map { |s|
         s.as_json.merge(
-          "user_account_withdrawn_at" => s.user&.account_withdrawn_at&.in_time_zone&.iso8601(3)
+          "user_account_withdrawn_at" => s.user&.account_withdrawn_at&.iso8601(3)
         )
       }
     }

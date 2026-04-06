@@ -29,8 +29,8 @@ module Api
                 id: user.id,
                 name: user.profile&.name || "ユーザー(#{user.id[0..7]})",
                 identifier: user.respond_to?(:uid) ? user.uid : user.id,
-                created_at: user.created_at&.iso8601(3),
-                account_withdrawn_at: user.account_withdrawn_at&.in_time_zone&.iso8601(3)
+                created_at: user.created_at,
+                account_withdrawn_at: user.account_withdrawn_at&.iso8601(3)
               }
             }
           }

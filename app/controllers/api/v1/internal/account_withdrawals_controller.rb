@@ -18,8 +18,7 @@ module Api
             return render json: { updated: false, reason: "user_not_found" }, status: :ok
           end
 
-          # users.account_withdrawn_at は migration の :datetime（PG では timestamp）で Time 系と整合する
-          user.update_column(:account_withdrawn_at, Time.zone.now)
+          user.update_column(:account_withdrawn_at, Time.current)
           render json: { updated: true }, status: :ok
         rescue StandardError => e
           Rails.logger.error("[mark_account_withdrawn] #{e.class}: #{e.message}")
