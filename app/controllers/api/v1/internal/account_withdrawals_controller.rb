@@ -2,7 +2,7 @@ module Api
   module V1
     module Internal
       # Next.js 退会フローからのみ呼ぶ。ACCOUNT_WITHDRAWAL_INTERNAL_SECRET で保護。
-      # users.account_withdrawn_at を立てる。
+      # users.account_withdrawn_at を立てる（行は残す）。
       class AccountWithdrawalsController < ActionController::API
         before_action :verify_secret!
 
