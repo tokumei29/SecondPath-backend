@@ -6,17 +6,13 @@ module Api
 
       # GET /api/v1/profile
       def show
-        # params[:user_id] ではなく、current_user に紐づくプロフィールを取得・作成
-        profile = Profile.find_or_create_by!(user_id: current_user.id)
-        render json: profile
+        render json: current_profile
       end
 
       # PATCH/PUT /api/v1/profile
       def update
-        # 常に「自分のプロフィール」を更新
-        profile = Profile.find_or_initialize_by(user_id: current_user.id)
-
-        if profile.update(profile_params.except(:id, :user_id, :created_at, :updated_at))
+        profile = current_profile
+        if profile.update(profile_params)
           render json: profile
         else
           render json: { errors: profile.errors.full_messages }, status: :unprocessable_entity
@@ -24,6 +20,11 @@ module Api
       end
 
       private
+
+      # 並行リクエストでも user_id 一意制約と整合するよう INSERT 優先で取りにいく（find_or_create はレースで重複し得る）
+      def current_profile
+        @current_profile ||= Profile.create_or_find_by!(user_id: current_user.id)
+      end
 
       def profile_params
         params.require(:profile).permit(
