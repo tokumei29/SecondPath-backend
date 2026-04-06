@@ -19,7 +19,7 @@ Rails.application.routes.draw do
         end
       end
 
-      # Next.js 退会フローから users.account_withdrawn_at を立てる
+      # Next.js 退会フローから users.account_withdrawn_at（ACCOUNT_WITHDRAWAL_INTERNAL_SECRET 必須）
       post "internal/mark_account_withdrawn", to: "internal/account_withdrawals#create"
 
       namespace :admin do
