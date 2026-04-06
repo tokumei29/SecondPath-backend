@@ -1,11 +1,8 @@
 module Api
   module V1
     module Internal
-      # Next.js 退会フローからのみ呼ぶ。ACCOUNT_WITHDRAWAL_INTERNAL_SECRET で保護。
-      # users.account_withdrawn_at を立てる（行は残す）。
+      # Next.js 退会 API から呼ぶ。users.account_withdrawn_at を立てる（行は残す）。
       class AccountWithdrawalsController < ActionController::API
-        before_action :verify_secret!
-
         def create
           sid = withdrawal_supabase_id
           if sid.blank?
@@ -18,7 +15,8 @@ module Api
             return render json: { updated: false, reason: "user_not_found" }, status: :ok
           end
 
-          user.update_column(:account_withdrawn_at, Time.current)
+          # users.account_withdrawn_at は migration の :datetime（PG では timestamp）で Time 系と整合する
+          user.update_column(:account_withdrawn_at, Time.zone.now)
           render json: { updated: true }, status: :ok
         rescue StandardError => e
           Rails.logger.error("[mark_account_withdrawn] #{e.class}: #{e.message}")
@@ -30,14 +28,6 @@ module Api
         def withdrawal_supabase_id
           raw = params[:supabase_id] || params[:user_id]
           raw.to_s.strip.presence
-        end
-
-        def verify_secret!
-          provided = request.headers["X-Internal-Secret"].to_s.strip
-          expected = ENV["ACCOUNT_WITHDRAWAL_INTERNAL_SECRET"].to_s.strip
-          unless expected.present? && ActiveSupport::SecurityUtils.secure_compare(provided, expected)
-            head :unauthorized
-          end
         end
       end
     end
