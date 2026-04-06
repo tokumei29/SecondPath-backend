@@ -5,7 +5,7 @@ class ProfilesUniqueUserIdAndFk < ActiveRecord::Migration[8.0]
     say_with_time "Removing invalid / duplicate profiles" do
       Profile.reset_column_information
 
-      Profile.where(user_id: [nil, ""]).delete_all
+      Profile.where(user_id: [ nil, "" ]).delete_all
 
       orphan_scope = Profile.where.not(user_id: User.select(:supabase_id))
       deleted_orphans = orphan_scope.delete_all
